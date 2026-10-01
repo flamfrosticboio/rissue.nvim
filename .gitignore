@@ -1,0 +1,4 @@
+**/.env
+.test_setup/**/*
+node_modules
+.tmp/

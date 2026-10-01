@@ -1,0 +1,46 @@
+[tools]
+luajit = "latest"
+neovim = "latest"
+
+[env]
+_.file = '.env'
+
+[tasks.try]
+description = "Try to run a script inside this project environment (nvim)"
+run = "nvim -u ./test/setup_core.lua"
+
+[tasks.test]
+description = "Run tests with headless Neovim and plenary.nvim"
+run = "nvim --headless -u test/setup.lua -c \"PlenaryBustedDirectory test/ { minimal_init = 'test/setup.lua' }\""
+
+[tasks.check]
+description = "Check all files using configured pre-commit with prek"
+run = "prek run --all-files"
+
+[tasks.lint]
+description = "Lint all source files"
+run = "selene --config .selene.toml"
+
+[tasks.lint_test]
+description = "Lint all test files"
+run = "selene --config .selene.tests.toml"
+
+[tasks.doc]
+description = "Generate documentation"
+run = "nvim --headless -u NONE -l ./scripts/auto_doc.lua -c 'exit'"
+
+[tasks.format]
+description = "Format files"
+run = "stylua --config-path .stylua.toml"
+
+[tasks.setup]
+description = "Install tools and git pre-commit hooks"
+run = '''
+echo ">>> Installing core"
+mise install
+echo ">>> Installing dev tools"
+mise install -E dev
+echo ">>> Setting up prek"
+prek install
+echo "### Done"
+'''

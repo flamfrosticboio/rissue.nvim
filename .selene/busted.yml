@@ -1,0 +1,34 @@
+globals:
+  describe:
+    args:
+      - type: string
+      - type: function
+  it:
+    args:
+      - type: string
+      - type: function
+  before_each:
+    args:
+      - type: function
+  after_each:
+    args:
+      - type: function
+  setup:
+    args:
+      - type: function
+  teardown:
+    args:
+      - type: function
+  pending:
+    args:
+      - type: string
+  assert:
+    any: true
+  spy:
+    any: true
+  stub:
+    any: true
+  mock:
+    any: true
+  match:
+    any: true

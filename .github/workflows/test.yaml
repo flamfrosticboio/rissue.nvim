@@ -1,0 +1,30 @@
+name: Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
+    env:
+      ALL: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Dependencies with apt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libuv1-dev cmake libreadline-dev libncurses-dev
+
+      - name: Install Dependencies with mise
+        uses: jdx/mise-action@v2
+
+      - name: Run tests
+        run: |
+          mise test

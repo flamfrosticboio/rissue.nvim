@@ -1,0 +1,7 @@
+[tools]
+stylua = "latest"
+# Used for autodoc script
+lua-language-server = "latest"
+"aqua:Kampfkarren/selene" = "latest"
+prek = "latest"
+prettier = "latest"
