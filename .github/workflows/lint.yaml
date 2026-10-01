@@ -1,4 +1,4 @@
-name: Tests
+name: Lint
 on:
   push:
     branches:
@@ -9,11 +9,10 @@ on:
       - dev
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-slim
     timeout-minutes: 15
     env:
-      ALL: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' }}
       MISE_AUTO_INSTALL: false
     steps:
       - uses: actions/checkout@v6
@@ -22,8 +21,12 @@ jobs:
         uses: jdx/mise-action@v2
         with:
           install_args:
-            neovim
+            aqua:Kampfkarren/selene
 
-      - name: Run tests
+      - name: Run lint
         run: |
-          mise test
+          mise run lint -- lua/
+
+      - name: Run lint on tests
+        run: |
+          mise run lint_test -- test/
