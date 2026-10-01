@@ -21,7 +21,6 @@ end
 
 chunk()
 
-vim.opt.rtp:prepend(".")
 local plenary_dir = ".tmp/plenary.nvim"
 
 if vim.fn.isdirectory(plenary_dir) == 0 then
