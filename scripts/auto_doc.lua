@@ -32,7 +32,7 @@
 
 local file_cache = {}
 
-local FOLDER = "lua/rissue.nvim"
+local FOLDER = "lua/rissue-nvim"
 
 ---@param path string
 ---@return string? contents

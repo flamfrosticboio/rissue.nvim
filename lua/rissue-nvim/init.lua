@@ -15,7 +15,7 @@
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 local rissue = {}
----@param opts rissue.Opts
+---@param opts? rissue.Opts
 function rissue.setup(opts)
   -- unimplemented
   print(opts)
