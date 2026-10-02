@@ -14,20 +14,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-local rissue = require("rissue-nvim")
+local config = {}
 
-describe("rissue", function()
-  it("simple setup ok", function()
-    rissue.setup()
-  end)
+---@type rissue-nvim.Settings
+config.settings = {
+  core = nil, -- will be handled on the main module
+}
 
-  it("core setup ok", function()
-    rissue.setup({
-      core = {
-        timeout = 10,
-      },
-    })
+---@param opts? rissue-nvim.Opts
+function config.setup(opts)
+  config.settings = vim.tbl_deep_extend("force", config.settings, opts or {})
+end
 
-    rissue.get_config()
-  end)
-end)
+return config
