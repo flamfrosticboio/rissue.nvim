@@ -34,6 +34,7 @@ end
 local installed_path = os.getenv("CORE_PATH")
 if not (installed_path and is_dir_non_empty(installed_path)) then
   installed_path = ".tmp/rissue"
+  vim.fn.mkdir(installed_path, "p")
   if not is_dir_non_empty(installed_path) then
     print("git clone rissue.lua to ./.tmp folder")
     vim.fn.system({
