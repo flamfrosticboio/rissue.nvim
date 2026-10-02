@@ -5,7 +5,12 @@
         "pathStrict": true
     },
     "workspace": {
-        "library": ["./src", "$VIMRUNTIME"],
+        "library": [
+            "./lua",
+            "$VIMRUNTIME",
+            "./.tmp/rissue/lua",
+            "./.tmp/rissue/src/"
+        ],
         "ignoreDir": ["test"]
     }
 }
