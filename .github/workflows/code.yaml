@@ -1,0 +1,40 @@
+name: Code
+on:
+  workflow_call:
+    outputs:
+      changed:
+        value: ${{ jobs.format_and_autodoc.outputs.changed }}
+jobs:
+  format_and_autodoc:
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.format_commit.outputs.changes_detected == 'true' || steps.docs_commit.outputs.changes_detected == 'true' }}
+    env:
+      MISE_AUTO_INSTALL: false
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - uses: jdx/mise-action@v2
+        with:
+          install_args: stylua neovim lua-language-server
+
+      - run: mise run format -- lua/
+
+      - id: format_commit
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: 'chore(format): format files'
+          file_pattern: 'lua/**/*.lua'
+
+      - run: mise run doc
+
+      - id: docs_commit
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: 'docs: update generated docs'
+          file_pattern: 'docs/*.md'
