@@ -19,7 +19,7 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v5
         with:
           install_args: stylua neovim lua-language-server
 
