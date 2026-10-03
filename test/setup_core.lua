@@ -31,15 +31,20 @@ local function is_dir_non_empty(path)
   return false
 end
 
+local rissue_version = "v0.1"
+
 local installed_path = os.getenv("CORE_PATH")
 if not (installed_path and is_dir_non_empty(installed_path)) then
   installed_path = ".tmp/rissue"
+  vim.fn.mkdir(installed_path, "p")
   if not is_dir_non_empty(installed_path) then
     print("git clone rissue.lua to ./.tmp folder")
     vim.fn.system({
       "git",
       "clone",
       "--depth=1",
+      "--branch",
+      rissue_version,
       "https://github.com/flamfrosticboio/rissue.lua",
       installed_path,
     })

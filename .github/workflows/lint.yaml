@@ -1,12 +1,6 @@
 name: Lint
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-      - dev
+  workflow_call:
 
 jobs:
   lint:
@@ -18,7 +12,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Install Dependencies with mise
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@v5
         with:
           install_args:
             aqua:Kampfkarren/selene
