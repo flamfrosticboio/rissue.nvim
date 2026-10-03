@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug
 labels: ["needs-triage", "bug"]
-title: "Bug: "
+title: "bug: "
 body:
   - type: textarea
     id: description
