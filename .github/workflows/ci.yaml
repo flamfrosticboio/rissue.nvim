@@ -17,18 +17,46 @@ jobs:
       contents: write
     secrets: inherit
 
-  lint:
+  check-changes:
     needs: fix_code
+    runs-on: ubuntu-slim
+    outputs:
+      relevant: ${{ steps.code.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: code
+        with:
+          filters: |
+            relevant:
+              - 'lua/**'
+              - 'test/**'
+
+  lint:
+    needs: [fix_code, check-changes]
     if: >-
       always() &&
-      needs.fix_code.result != 'failure' &&
-      needs.fix_code.outputs.changed != 'true'
+      needs.fix_code.result == 'success' &&
+      needs.fix_code.outputs.changed != 'true' &&
+      (github.event_name != 'pull_request' ||
+      needs.check-changes.outputs.relevant == 'true')
     uses: ./.github/workflows/lint.yaml
 
   test:
-    needs: fix_code
+    needs: [fix_code, check-changes]
     if: >-
       always() &&
-      needs.fix_code.result != 'failure' &&
-      needs.fix_code.outputs.changed != 'true'
+      needs.fix_code.result == 'success' &&
+      needs.fix_code.outputs.changed != 'true' &&
+      (github.event_name != 'pull_request' ||
+      needs.check-changes.outputs.relevant == 'true')
     uses: ./.github/workflows/test.yaml
+
+  is-successful:
+    if: always()
+    needs: [fix_code, check-changes, test, lint]
+    runs-on: ubuntu-slim
+    steps:
+      - name: Fail if tests failed or were cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
