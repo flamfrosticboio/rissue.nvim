@@ -10,7 +10,7 @@ on:
       - dev
 
 jobs:
-  fix_code:
+  fix-code:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     uses: ./.github/workflows/code.yaml
     permissions:
@@ -18,7 +18,7 @@ jobs:
     secrets: inherit
 
   check-changes:
-    needs: fix_code
+    needs: fix-code
     runs-on: ubuntu-slim
     outputs:
       relevant: ${{ steps.code.outputs.relevant }}
@@ -33,28 +33,28 @@ jobs:
               - 'test/**'
 
   lint:
-    needs: [fix_code, check-changes]
+    needs: [fix-code, check-changes]
     if: >-
       always() &&
-      needs.fix_code.result == 'success' &&
-      needs.fix_code.outputs.changed != 'true' &&
+      needs.fix-code.result == 'success' &&
+      needs.fix-code.outputs.changed != 'true' &&
       (github.event_name != 'pull_request' ||
       needs.check-changes.outputs.relevant == 'true')
     uses: ./.github/workflows/lint.yaml
 
   test:
-    needs: [fix_code, check-changes]
+    needs: [fix-code, check-changes]
     if: >-
       always() &&
-      needs.fix_code.result == 'success' &&
-      needs.fix_code.outputs.changed != 'true' &&
+      needs.fix-code.result == 'success' &&
+      needs.fix-code.outputs.changed != 'true' &&
       (github.event_name != 'pull_request' ||
       needs.check-changes.outputs.relevant == 'true')
     uses: ./.github/workflows/test.yaml
 
   is-successful:
     if: always()
-    needs: [fix_code, check-changes, test, lint]
+    needs: [fix-code, check-changes, test, lint]
     runs-on: ubuntu-slim
     steps:
       - name: Fail if tests failed or were cancelled
