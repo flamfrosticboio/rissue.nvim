@@ -10,25 +10,57 @@ on:
       - dev
 
 jobs:
-  fix_code:
+  fix-code:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     uses: ./.github/workflows/code.yaml
     permissions:
       contents: write
     secrets: inherit
 
+  check-changes:
+    needs: fix-code
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-slim
+    outputs:
+      relevant: ${{ steps.diff.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD \
+             | grep -qE '^(lua|test)/'; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+          fi
+
   lint:
-    needs: fix_code
+    needs: [fix-code, check-changes]
     if: >-
       always() &&
-      needs.fix_code.result != 'failure' &&
-      needs.fix_code.outputs.changed != 'true'
+      needs.fix-code.result == 'success' &&
+      needs.fix-code.outputs.changed != 'true' &&
+      (github.event_name != 'pull_request' ||
+      needs.check-changes.outputs.relevant == 'true')
     uses: ./.github/workflows/lint.yaml
 
   test:
-    needs: fix_code
+    needs: [fix-code, check-changes]
     if: >-
       always() &&
-      needs.fix_code.result != 'failure' &&
-      needs.fix_code.outputs.changed != 'true'
+      needs.fix-code.result == 'success' &&
+      needs.fix-code.outputs.changed != 'true' &&
+      (github.event_name != 'pull_request' ||
+      needs.check-changes.outputs.relevant == 'true')
     uses: ./.github/workflows/test.yaml
+
+  is-successful:
+    if: always()
+    needs: [fix-code, check-changes, test, lint]
+    runs-on: ubuntu-slim
+    steps:
+      - name: Fail if tests failed or were cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
