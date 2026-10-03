@@ -1,0 +1,34 @@
+name: Chore
+description: Maintenance task (maintainers only)
+title: "chore: "
+labels: ["chore", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This template is for maintainers only.** If you're not a maintainer, please use other templates instead.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Start with a one-sentence summary of the chore, then explain the details below it.
+      placeholder: |
+        (summary in one sentence)
+
+        (details on what needs to be done and why)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: types
+    attributes:
+      label: Type
+      description: Select all that apply.
+      options:
+        - label: Refactor / Performance
+        - label: Config
+        - label: Build / Dependencies
+        - label: Tests
+        - label: Cleanup
+        - label: Other

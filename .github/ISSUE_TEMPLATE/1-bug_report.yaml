@@ -1,0 +1,30 @@
+name: Bug Report
+description: Report a bug
+labels: ["needs-triage", "bug"]
+title: "bug: "
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Start with a one-sentence summary of the bug, then explain the details below it.
+      placeholder: |
+        Summary: (one sentence)
+
+        Details: (what happened, when, and where)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps & Expected Result
+      description: List the steps to reproduce the bug and what you expected to happen. You can attach screenshots, logs, or sample outputs.
+      placeholder: |
+        1. Go to...
+        2. Click on...
+        3. See error
+
+        Expected: ...
+    validations:
+      required: false
