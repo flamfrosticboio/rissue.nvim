@@ -1,0 +1,28 @@
+name: Documentation
+description: Report missing, unclear, or outdated documentation
+title: "docs: "
+labels: ["documentation", "needs-triage"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Start with a one-sentence summary of the documentation issue, then explain the details below it.
+      placeholder: |
+        (summary in one sentence)
+
+        (details such as what's missing, unclear, or outdated)
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Related Files
+      description: List any related files, pages, or links.
+      placeholder: |
+        - README.md
+        - docs/getting-started.md
+        - https://example.com/docs/page
+    validations:
+      required: false

@@ -1,0 +1,42 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: "feat: "
+labels: ["feature", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please fill out the details below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Start with a one-sentence summary of the feature, then explain the details below it.
+      placeholder: |
+        Summary: (one sentence)
+
+        Details: (how it should work, who it helps)
+    validations:
+      required: true
+
+  - type: textarea
+    id: reasons
+    attributes:
+      label: Reasons
+      description: Explain why this feature is needed and what problem it solves.
+      placeholder: |
+        - The problem it solves...
+        - Why existing options aren't enough...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Checklist"
+      options:
+        - label: I have reviewed this request with all the necessary details, and I'm responsible for providing more details about it.
+          required: true
+        - label: Results to breaking change/s
+          required: false
