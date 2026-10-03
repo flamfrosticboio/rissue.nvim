@@ -14,11 +14,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+---@module "rissue"
+
 --- Configuration used on rissue.nvim and rissue.lua
----@class rissue.Settings
----@field core rissue.settings.Core
+---@class rissue-nvim.Settings
+--- Configuration for rissue.lua
+---
+--- This field is `nil` when user has not properly run setup for rissue.nvim
+---@field core? rissue.Config
 
----@class (partial) rissue.Opts: rissue.Settings
-
---- Core Configuration (passed on rissue.lua)
----@class rissue.settings.Core
+---@class (partial) rissue-nvim.Opts: rissue-nvim.Settings
+---@field core? rissue.Opts
