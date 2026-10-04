@@ -14,23 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-local chunk, load_err = loadfile("test/setup_core.lua")
-if not chunk then
-  error(load_err)
-end
+---@meta
 
-chunk()
-
-local plenary_dir = vim.fs.abspath(".tmp/plenary.nvim")
-
-if vim.fn.isdirectory(plenary_dir) == 0 then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--depth=1",
-    "https://github.com/nvim-lua/plenary.nvim",
-    plenary_dir,
-  })
-end
-
-vim.opt.rtp:append(plenary_dir)
+--- Specification on rissue-nvim pickers
+---@class rissue-nvim.Picker
+--- load function
+---@field load fun()

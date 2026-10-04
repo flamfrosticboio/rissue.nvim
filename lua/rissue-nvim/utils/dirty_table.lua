@@ -14,23 +14,29 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-local chunk, load_err = loadfile("test/setup_core.lua")
-if not chunk then
-  error(load_err)
+local dtable = {}
+
+--- Prepares the table to be dirty
+--- @param tbl table
+function dtable.dirtify(tbl)
+  local size = #tbl
+  setmetatable(tbl, { dirty = true, isize = size })
 end
 
-chunk()
-
-local plenary_dir = vim.fs.abspath(".tmp/plenary.nvim")
-
-if vim.fn.isdirectory(plenary_dir) == 0 then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--depth=1",
-    "https://github.com/nvim-lua/plenary.nvim",
-    plenary_dir,
-  })
+--- Adds an item to the dirty table
+--- Will break when other operation to append an item is used
+---@generic V
+---@param tbl V[]
+---@param item V
+---@param _cls? `V`
+---@return integer index
+---@diagnostic disable-next-line: unused-local
+function dtable.list_append(tbl, item, _cls)
+  local metadata = getmetatable(tbl)
+  local offset = metadata.isize + 1
+  tbl[offset] = item
+  metadata.isize = offset
+  return offset
 end
 
-vim.opt.rtp:append(plenary_dir)
+return dtable
