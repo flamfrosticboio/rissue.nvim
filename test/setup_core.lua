@@ -88,21 +88,32 @@ if not (installed_path and is_dir_non_empty(installed_path)) then
   end
 end
 
---- follows format: { name, url, branch }
 --- env_name check is transformed with name:upper()
----@type { [1]: string, [2]: string, [3]: string? }[]
+---@type { name: string, url: string, branch: string?, setup: fun()? }[]
 local other_dependencies = {
-  { "snacks", "https://github.com/folke/snacks.nvim", "stable" },
+  {
+    name = "snacks",
+    url = "https://github.com/folke/snacks.nvim",
+    branch = "stable",
+    setup = function()
+      require("snacks").setup({
+        picker = {},
+      })
+    end,
+  },
 }
 
 local install_all = os.getenv("INSTALL_ALL") == "true"
 for _, dependencies in ipairs(other_dependencies) do
-  local env = dependencies[1]:upper()
-  local path = ".tmp/" .. dependencies[1]
+  local env = dependencies.name:upper()
+  local path = ".tmp/" .. dependencies.name
   if
     not is_dir_non_empty(path) and (install_all or os.getenv(env) == "true")
   then
-    git_clone(dependencies[2], ".tmp/" .. dependencies[1], dependencies[3])
+    git_clone(dependencies.url, path, dependencies.branch)
+    if dependencies.setup then
+      dependencies.setup()
+    end
   end
 end
 
