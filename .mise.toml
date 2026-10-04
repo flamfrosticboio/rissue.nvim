@@ -11,7 +11,7 @@ stylua = "latest"
 
 [tasks.try]
 description = "Try to run a script inside this project environment (nvim)"
-run = "nvim -u ./test/setup_core.lua"
+run = "nvim -u ./test/setup_core.lua -c \"lua require('rissue-nvim').setup()\""
 
 [tasks.test]
 description = "Run tests with headless Neovim and plenary.nvim"
