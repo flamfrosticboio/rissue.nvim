@@ -36,7 +36,7 @@ local pickers = {
 function config.setup(opts)
   config.settings = vim.tbl_deep_extend("force", config.settings, opts or {})
 
-  for _, picker in ipairs(pickers) do
+  for _, picker in pairs(pickers) do
     picker.load()
   end
 end
