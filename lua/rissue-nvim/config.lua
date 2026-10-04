@@ -18,10 +18,14 @@ local config = {}
 
 config.loaded = false
 
+--- ### rissue-nvim.config ### ---
+
 ---@type rissue-nvim.Settings
 config.settings = {
   core = nil, -- will be handled on the main module
 }
+
+--- ### rissue-nvim.config ### ---
 
 ---@type rissue-nvim.Picker[]
 local pickers = {
