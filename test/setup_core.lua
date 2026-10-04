@@ -88,6 +88,8 @@ if not (installed_path and is_dir_non_empty(installed_path)) then
   end
 end
 
+vim.opt.rtp:append(installed_path)
+
 --- env_name check is transformed with name:upper()
 ---@type { name: string, url: string, branch: string?, setup: fun()? }[]
 local other_dependencies = {
@@ -107,14 +109,13 @@ local install_all = os.getenv("INSTALL_ALL") == "true"
 for _, dependencies in ipairs(other_dependencies) do
   local env = dependencies.name:upper()
   local path = ".tmp/" .. dependencies.name
-  if
-    not is_dir_non_empty(path) and (install_all or os.getenv(env) == "true")
-  then
-    git_clone(dependencies.url, path, dependencies.branch)
+  if install_all or os.getenv(env) == "true" then
+    if not is_dir_non_empty(path) then
+      git_clone(dependencies.url, path, dependencies.branch)
+    end
+    vim.opt.rtp:append(path)
     if dependencies.setup then
       dependencies.setup()
     end
   end
 end
-
-vim.opt.rtp:append(installed_path)
