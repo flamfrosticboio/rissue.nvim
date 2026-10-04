@@ -16,14 +16,25 @@
 
 local config = {}
 
+config.loaded = false
+
 ---@type rissue-nvim.Settings
 config.settings = {
   core = nil, -- will be handled on the main module
 }
 
+---@type rissue-nvim.Picker[]
+local pickers = {
+  snacks = require("rissue-nvim.pickers.snacks"),
+}
+
 ---@param opts? rissue-nvim.Opts
 function config.setup(opts)
   config.settings = vim.tbl_deep_extend("force", config.settings, opts or {})
+
+  for _, picker in ipairs(pickers) do
+    picker.load()
+  end
 end
 
 return config
