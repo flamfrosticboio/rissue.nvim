@@ -21,7 +21,7 @@ end
 
 chunk()
 
-local plenary_dir = ".tmp/plenary.nvim"
+local plenary_dir = vim.fs.abspath(".tmp/plenary.nvim")
 
 if vim.fn.isdirectory(plenary_dir) == 0 then
   vim.fn.system({

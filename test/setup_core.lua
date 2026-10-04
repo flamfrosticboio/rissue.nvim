@@ -14,7 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-vim.opt.rtp:prepend(".")
+vim.opt.rtp:prepend(vim.fs.abspath("."))
 
 local function is_dir_non_empty(path)
   local req, err = vim.uv.fs_scandir(path)
@@ -71,13 +71,14 @@ local function git_clone(url, target, branch)
   print("git clone was complete")
 end
 
--- https://github.com/folke/snacks.nvim
-
 local rissue_version = "v0.1"
 
 local installed_path = os.getenv("CORE_PATH")
+if installed_path then
+  installed_path = vim.fs.abspath(installed_path)
+end
 if not (installed_path and is_dir_non_empty(installed_path)) then
-  installed_path = ".tmp/rissue"
+  installed_path = vim.fs.abspath(".tmp/rissue")
   vim.fn.mkdir(installed_path, "p")
   if not is_dir_non_empty(installed_path) then
     git_clone(
@@ -108,7 +109,7 @@ local other_dependencies = {
 local install_all = os.getenv("INSTALL_ALL") == "true"
 for _, dependencies in ipairs(other_dependencies) do
   local env = dependencies.name:upper()
-  local path = ".tmp/" .. dependencies.name
+  local path = vim.fs.abspath(".tmp/" .. dependencies.name)
   if install_all or os.getenv(env) == "true" then
     if not is_dir_non_empty(path) then
       git_clone(dependencies.url, path, dependencies.branch)
