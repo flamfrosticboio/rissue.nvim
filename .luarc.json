@@ -9,7 +9,8 @@
             "./lua",
             "$VIMRUNTIME",
             "./.tmp/rissue/lua",
-            "./.tmp/rissue/src/"
+            "./.tmp/rissue/src/",
+            "./.tmp/snacks/lua"
         ],
         "ignoreDir": ["test"]
     }
