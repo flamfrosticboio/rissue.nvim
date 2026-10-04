@@ -22,7 +22,8 @@ config.loaded = false
 
 ---@type rissue-nvim.Settings
 config.settings = {
-  core = nil, -- will be handled on the main module
+  core = nil, -- loaded by rissue.lua module
+  remote_name = "origin",
 }
 
 --- ### rissue-nvim.config ### ---

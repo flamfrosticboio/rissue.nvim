@@ -22,6 +22,21 @@
 ---
 --- This field is `nil` when user has not properly run setup for rissue.nvim
 ---@field core? rissue.Config
+--- The remote name when getting url from context with:
+--- ```bash
+--- git remote get-url <remote_name>
+--- ```
+---
+--- Default: "origin"
+---
+--- Can be overriden with environment variable: "REMOTE_NAME"
+---
+--- Example:
+--- ```bash
+--- # inside .env
+--- REMOTE_NAME=base
+--- ```
+---@field remote_name string
 
 ---@class (partial) rissue-nvim.Opts: rissue-nvim.Settings
 ---@field core? rissue.Opts
