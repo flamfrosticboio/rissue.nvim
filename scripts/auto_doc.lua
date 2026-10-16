@@ -293,11 +293,13 @@ local function parse_entry(entry, buffer)
   buffer[name] = spec
 end
 
-local constants_pattern_lua = "%-%-%-%s*###%s*([%w.]+)%s*###%s*---"
+local constants_pattern_lua = "%-%-%-%s*###%s*(%S+)%s*###%s*---"
 ---@param raw string
 local function parse_seen_constants(raw, buffer)
   for constant_name in raw:gmatch(constants_pattern_lua) do
-    local headers = "\n%-%-%-%s*###%s*" .. constant_name .. "%s*###%s*---%s*\n"
+    local headers = "\n%-%-%-%s*###%s*"
+      .. escape_pattern(constant_name)
+      .. "%s*###%s*---%s*\n"
     local pattern = headers .. "(.-)" .. headers
     local result = raw:match(pattern) ---@type string?
     if result then
@@ -425,20 +427,22 @@ end
 ---@return string
 local function write_constants(raw, constants)
   local saw = {}
-  for const in raw:gmatch("<!%-%-%s*%*([%w.]+)%s*%-%->") do
+  for const in raw:gmatch("<!%-%-%s*%*(%S+)%s*%-%->") do
     if not saw[const] then
-      if not constants[const] then
+      local value = constants[const]
+      if not value then
         error("unknown constant: " .. const, 0)
       end
       saw[const] = true
 
-      local ends = "<!%-%-%s*%*" .. const .. "%s*%-%->"
+      local const_escaped = escape_pattern(const)
+      local ends = "<!%-%-%s*%*" .. const_escaped .. "%s*%-%->"
       local find_pattern = ends .. ".-" .. ends
 
-      local headers = "<!-- *" .. const .. " -->"
+      local headers = "<!-- *" .. const_escaped .. " -->"
       local replacement = headers
         .. "\n\n```lua\n"
-        .. constants[const]
+        .. value
         .. "\n```\n\n"
         .. headers
 
