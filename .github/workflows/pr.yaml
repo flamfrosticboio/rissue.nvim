@@ -2,36 +2,55 @@ name: PR
 
 on:
   pull_request_target:
-    types: [opened, edited, reopened]
+    types: [opened, synchronize, reopened]
 
 permissions:
+  contents: read
   pull-requests: write
-  issues: write
 
 jobs:
-  auto-label:
+  pr-auto-label:
     runs-on: ubuntu-slim
     steps:
-      - name: Label PR by title prefix
+      - id: label
+        name: Label PR by title and commit prefixes
         uses: actions/github-script@v7
         with:
           script: |
-            const title = context.payload.pull_request.title.toLowerCase();
-
             const rules = [
               { regex: /^(bugfix|fix)(\(.+\))?!?:/, label: 'bugfix' },
               { regex: /^feat(\(.+\))?!?:/,         label: 'feature' },
-              { regex: /^docs(\(.+\))?!?:/,         label: 'docs' },
-              { regex: /^(chore|merge)(\(.+\))?!?:/, label: 'chore' },
+              { regex: /^docs(\(.+\))?!?:/,         label: 'documentation' },
+              { regex: /^(chore)(\(.+\))?!?:/,      label: 'chore' },
             ];
-
             const managed = rules.map(r => r.label);
-            const match = rules.find(r => r.regex.test(title));
 
-            // Remove stale managed labels (e.g. after a title edit)
+            // Collect title + all commit subject lines
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              ...context.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const messages = [
+              context.payload.pull_request.title,
+              ...commits
+                .filter(c => c.parents.length < 2)            // skip merge commits
+                .map(c => c.commit.message.split('\n')[0]),   // subject line only
+            ].map(m => m.toLowerCase());
+
+            // Every label that matches any message
+            const wanted = new Set();
+            for (const msg of messages) {
+              for (const rule of rules) {
+                if (rule.regex.test(msg)) wanted.add(rule.label);
+              }
+            }
+
+            // Remove stale managed labels
             const current = context.payload.pull_request.labels.map(l => l.name);
             for (const name of current) {
-              if (managed.includes(name) && (!match || match.label !== name)) {
+              if (managed.includes(name) && !wanted.has(name)) {
                 await github.rest.issues.removeLabel({
                   ...context.repo,
                   issue_number: context.issue.number,
@@ -40,10 +59,14 @@ jobs:
               }
             }
 
-            if (match) {
+            // Add missing labels
+            const toAdd = [...wanted].filter(l => !current.includes(l));
+            if (toAdd.length) {
               await github.rest.issues.addLabels({
                 ...context.repo,
                 issue_number: context.issue.number,
-                labels: [match.label],
+                labels: toAdd,
               });
             }
+
+            core.setOutput('labels', JSON.stringify([...wanted]));
